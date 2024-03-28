@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View, Text, Button } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { Image, StyleSheet, TouchableOpacity, View, Text, Button, Vibration } from 'react-native';
 import { Audio } from 'expo-av';
+import * as Animatable from 'react-native-animatable';
 import dogImage from './assets/dog1.gif';
 import sadDogImage from './assets/sad_dog.jpg';
 import happyDogImage from './assets/dog2.gif';
@@ -11,6 +12,7 @@ export default function App() {
     const [isBarking, setIsBarking] = useState(false);
     const [happinessLevel, setHappinessLevel] = useState(20);
     const [imageSource, setImageSource] = useState(dogImage);
+    const vibrationRef = useRef(null);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -34,15 +36,15 @@ export default function App() {
             await soundObject.loadAsync(barkSound);
             await soundObject.playAsync();
             setIsBarking(true);
-            setImageSource(happyDogImage); // Set image to dog2.gif when barking
+            setImageSource(happyDogImage);
+            Vibration.vibrate([400, 200, 400, 200, 400]); // vibration pattern
+            vibrationRef.current.pulse({ duration: 1000, infinite: true });
             soundObject.setOnPlaybackStatusUpdate((status) => {
                 if (!status.isPlaying) {
                     setIsBarking(false);
-                    if (happinessLevel > 10) {
-                        setImageSource(dogImage);
-                    } else {
-                        setImageSource(sadDogImage);
-                    }
+                    setImageSource(dogImage); // Reset image to dog1.gif when barking ends
+                    Vibration.cancel();
+                    vibrationRef.current.stopAnimation(); // Stop pulsating animation
                 }
             });
         } catch (error) {
@@ -51,7 +53,8 @@ export default function App() {
     };
 
     const handleFeed = () => {
-        setHappinessLevel(20); // Reset happiness level to 20 when fed
+        setHappinessLevel(20); // Feed the dog to reset the happiness level to 20
+        setImageSource(dogImage); // Reset image to dog1.gif when fed
     };
 
     const handlePress = () => {
@@ -63,9 +66,11 @@ export default function App() {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>This is Digi-Dog</Text>
             <TouchableOpacity onPress={handlePress}>
                 <View style={styles.imageContainer}>
-                    <Image
+                    <Animatable.Image
+                        ref={vibrationRef}
                         source={imageSource}
                         style={{
                             width: '100%',
@@ -89,6 +94,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
     },
     imageContainer: {
         width: 200,
