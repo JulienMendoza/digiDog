@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash.gif",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -15,16 +15,26 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": "./assets/icon.jpg",
+      "bundleIdentifier": "ca.lethbridgecollege.assignment5",
+      "buildNumber": "0.1.2"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "ca.lethbridgecollege.assignment5",
+      "versionCode": 240403
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "42b5723d-4e19-461e-9267-ba5a68426891"
+      }
     }
   }
 }
